@@ -3,8 +3,8 @@ schema_version: 1
 context:
   version: "0.1.9"
 
-package:
-  name: libsqlite-vec
+recipe:
+  name: sqlite-vec
   version: ${{ version }}
 
 source:
@@ -15,42 +15,21 @@ source:
     - 0002-avoid-using-uv-in-tests.patch
 
 build:
-  number: 0
+  number: 1
 
-requirements:
-  build:
-    - ${{ stdlib("c") }}
-    - ${{ compiler('c') }}
-    - gettext  # envsubst for sqlite-vec.h generation
-    - if: unix
-      then: make
-    - if: win
-      then:
-        - m2-bash
-        - m2-coreutils
-        - m2-sed
-        - m2-make
-  host:
-    - libsqlite
-  # sqlite-vec use sqlite's table interface API, not a linked libsqlite.
-  ignore_run_exports:
-    by_name:
-      - libsqlite
-
-tests:
-  - script: bash run_test.sh
-    files:
-      source:
-        - tests/
-        - Makefile
-      recipe:
-        - run_test.sh
+outputs:
+  - package:
+      name: libsqlite-vec
+    build:
+      script:
+        - if: unix
+          then: build.sh
+          else: build.bat
     requirements:
-      run:
-        - python >=3.12
-        - pytest
-        - numpy
-        - syrupy
+      build:
+        - ${{ stdlib("c") }}
+        - ${{ compiler('c') }}
+        - gettext  # envsubst for sqlite-vec.h generation
         - if: unix
           then: make
         - if: win
@@ -59,6 +38,69 @@ tests:
             - m2-coreutils
             - m2-sed
             - m2-make
+      host:
+        - libsqlite
+      run:
+        - libsqlite
+      # sqlite-vec use sqlite's table interface API, not a linked libsqlite.
+      ignore_run_exports:
+        by_name:
+          - libsqlite
+    tests:
+      - script: bash test_libsqlite-vec.sh
+        files:
+          source:
+            - tests/
+            - Makefile
+          recipe:
+            - test_libsqlite-vec.sh
+        requirements:
+          run:
+            - python >=${{ python_min }}
+            - pytest
+            - numpy
+            - syrupy
+            - if: unix
+              then: make
+            - if: win
+              then:
+                - m2-bash
+                - m2-coreutils
+                - m2-sed
+                - m2-make
+  - package:
+      name: sqlite-vec-python
+    build:
+      noarch: python
+      script:
+        content:
+          - python -m pip install "${{ RECIPE_DIR }}/sqlite-vec-python" -vv --no-build-isolation --no-deps
+    requirements:
+      host:
+        - python ${{ python_min }}.*
+        - setuptools
+        - pip
+      run:
+        - python >=${{ python_min }}
+        - libsqlite-vec ==${{ version }}
+        - numpy
+    tests:
+      - python:
+          imports:
+            - sqlite_vec
+          python_version:
+            - ${{ python_min }}.*
+            - "*"
+      - script:
+          - >-
+              python -c "import sqlite3, sqlite_vec;
+              db = sqlite3.connect(':memory:');
+              db.enable_load_extension(True);
+              sqlite_vec.load(db);"
+          - >-
+              python -c "import sqlite_vec, importlib.metadata;
+              assert '${{ version }}' == importlib.metadata.version('sqlite-vec'), 'Version mismatch, please update recipe/sqlite-vec/pyproject.toml';
+              assert '${{ version }}' == sqlite_vec.__version__, 'Version mismatch, please update recipe/sqlite-vec/sqlite_vec/__init__.py';"
 
 about:
   homepage: https://github.com/asg017/sqlite-vec
@@ -74,5 +116,6 @@ about:
   documentation: https://alexgarcia.xyz/sqlite-vec/
 
 extra:
+  feedstock-name: libsqlite-vec
   recipe-maintainers:
     - jsmolic

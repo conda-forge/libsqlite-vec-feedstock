@@ -68,6 +68,7 @@ Current release info
 | Name | Downloads | Version | Platforms |
 | --- | --- | --- | --- |
 | [![Conda Recipe](https://img.shields.io/badge/recipe-libsqlite--vec-green.svg)](https://anaconda.org/conda-forge/libsqlite-vec) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/libsqlite-vec.svg)](https://anaconda.org/conda-forge/libsqlite-vec) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/libsqlite-vec.svg)](https://anaconda.org/conda-forge/libsqlite-vec) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/libsqlite-vec.svg)](https://anaconda.org/conda-forge/libsqlite-vec) |
+| [![Conda Recipe](https://img.shields.io/badge/recipe-sqlite--vec--python-green.svg)](https://anaconda.org/conda-forge/sqlite-vec-python) | [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/sqlite-vec-python.svg)](https://anaconda.org/conda-forge/sqlite-vec-python) | [![Conda Version](https://img.shields.io/conda/vn/conda-forge/sqlite-vec-python.svg)](https://anaconda.org/conda-forge/sqlite-vec-python) | [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/sqlite-vec-python.svg)](https://anaconda.org/conda-forge/sqlite-vec-python) |
 
 Installing libsqlite-vec
 ========================
@@ -86,7 +87,7 @@ How to use
 <summary>With conda</summary>
 
 ```
-conda install libsqlite-vec
+conda install libsqlite-vec sqlite-vec-python
 ```
 
 </details>
@@ -95,7 +96,7 @@ conda install libsqlite-vec
 <summary>With mamba</summary>
 
 ```
-mamba install libsqlite-vec
+mamba install libsqlite-vec sqlite-vec-python
 ```
 
 </details>
@@ -105,9 +106,9 @@ mamba install libsqlite-vec
 
 ```
 # for adding to your local project
-pixi add libsqlite-vec
+pixi add libsqlite-vec sqlite-vec-python
 # for installing globally
-pixi global install libsqlite-vec
+pixi global install libsqlite-vec sqlite-vec-python
 ```
 
 </details>
